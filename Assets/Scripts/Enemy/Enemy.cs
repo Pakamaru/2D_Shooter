@@ -30,7 +30,7 @@ public class Enemy : CombatUnit
         stateMachine = new StateMachine();
 
         var attack = new Attack(this, Weapon, player, body);
-        var patrol = new Patrol(this, patrolRange, body);
+        var patrol = new Patrol(this, patrolRange, body, player);
         var watch = new Watch(this, player, body);
         var reset = new Reset(this, startPos, body);
 
