@@ -1,4 +1,5 @@
 School Project - Game Programming
+
 Author: Amaru Signore (sanamaru99@gmail.com)
 
 This game is made for an assessment for school.
