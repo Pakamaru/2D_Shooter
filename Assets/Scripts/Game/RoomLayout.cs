@@ -45,6 +45,7 @@ public class RoomLayout : MonoBehaviour
                 }
             }
         }
+        print("actual count: " + nodes.Count);
     }
 
     public TileType[,] GetTiles()
@@ -56,7 +57,7 @@ public class RoomLayout : MonoBehaviour
     {
         return nodes.Where(n => n.GetPos() == pos).FirstOrDefault();
     }
-    public Node GetNode(float x, float y)
+    public Node GetNode(int x, int y)
     {
         return nodes.Where(n => n.GetPos() == new Vector2Int(x, y)).FirstOrDefault();
     }
