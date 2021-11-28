@@ -1,4 +1,4 @@
-# School Project - Game Programming
+# School Project - Game Programming (https://github.com/Pakamaru/2D_Shooter)
 
 ## Author: Amaru Signore (sanamaru99@gmail.com)
 
