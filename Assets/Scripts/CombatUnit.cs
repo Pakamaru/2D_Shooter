@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class CombatUnit : MonoBehaviour
@@ -24,7 +22,6 @@ public abstract class CombatUnit : MonoBehaviour
         this.CurHealth = MaxHealth;
         this.CurDmg = MaxDmg;
         this.CurSpeed = MaxSpeed;
-
     }
 
     public Weapon Weapon { get; set; }
@@ -38,26 +35,37 @@ public abstract class CombatUnit : MonoBehaviour
     public int CurDmg { get; set; }
     public float CurSpeed { get; set; }
 
-    protected void Die()
+    private bool isTakingDmg;
+
+    protected void Die(CombatUnit shooter)
     {
-        print("You die");
+        if (shooter.GetType().Name == "Player")
+        {
+            FindObjectOfType<GameController>().currentRoom.KillOneEnemy();
+        }
+        else if (shooter.GetType().Name == "Enemy")
+        {
+            print("You die");
+        }
+        GameObject.Destroy(gameObject);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("Bullet") && collision.gameObject.GetComponent<Bullet>().Shooter.gameObject != gameObject)
+        if (collision.gameObject.CompareTag("Bullet") && !collision.gameObject.GetComponent<Bullet>().Shooter.CompareTag(gameObject.tag) && !isTakingDmg)
         {
+            isTakingDmg = true;
             TakeDamage(collision.gameObject.GetComponent<Bullet>().Shooter);
+            Destroy(collision.gameObject);
         }
     }
 
     private void TakeDamage(CombatUnit shooter)
     {
-        Die();
         CurHealth -= shooter.CurDmg;
         if (CurHealth <= 0)
         {
-            Die();
+            Die(shooter);
         }
     }
 }

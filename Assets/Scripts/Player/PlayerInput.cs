@@ -6,7 +6,7 @@ public class PlayerInput : MonoBehaviour
 {
     Rigidbody2D body;
     Player player;
-    float speed = 3.0f;
+    float speed = 2.0f;
 
     // Start is called before the first frame update
     void Start()
@@ -23,11 +23,6 @@ public class PlayerInput : MonoBehaviour
         Shoot();
     }
 
-    private void LateUpdate()
-    {
-        
-    }
-
     private void Movement()
     {
         float h = speed * Input.GetAxis("Horizontal");
@@ -40,7 +35,6 @@ public class PlayerInput : MonoBehaviour
     {
         Vector3 diff = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
         diff.Normalize();
-
         float rot_z = Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.Euler(0f, 0f, rot_z + 90);
     }

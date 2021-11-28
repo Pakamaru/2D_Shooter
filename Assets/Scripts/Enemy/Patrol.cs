@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,12 +7,7 @@ public class Patrol : IState
     private GameObject body;
     private GameObject player;
 
-    float range = 10.0f;
-    float roadPassed = 0;
-    private int patrolRange;
-
     // Algorithm
-    private TileType[,] map = new TileType[20, 10];
     private RoomLayout roomLayout;
 
     private List<Node> OpenList;
@@ -27,12 +21,12 @@ public class Patrol : IState
     private const int DIAGONAL_MOVE_COST = 15;
 
     private Node targetNode;
+    private bool calculating;
 
 
-    public Patrol(Enemy enemy, int patrolRange, GameObject body, GameObject player, RoomLayout roomLayout)
+    public Patrol(Enemy enemy, GameObject body, GameObject player, RoomLayout roomLayout)
     {
         this.enemy = enemy;
-        this.patrolRange = patrolRange;
         this.body = body;
         this.player = player;
         this.roomLayout = roomLayout;
@@ -40,41 +34,35 @@ public class Patrol : IState
 
     public void Tick()
     {
-        Move();
-
-        /*
-        if (roadPassed < range * 100)
-        {
-            enemy.GetComponent<Rigidbody2D>().velocity = new Vector2(0 * enemy.CurSpeed, 1 * enemy.CurSpeed);
-            roadPassed += 1 * enemy.CurSpeed;
-        }
-        else
-        {
-            enemy.GetComponent<Rigidbody2D>().velocity = new Vector2(0 * enemy.CurSpeed, -1 * enemy.CurSpeed);
-            roadPassed += 1 * enemy.CurSpeed;
-            if (roadPassed > range * 100 * 2)
-                roadPassed = 0;
-        }
-        */
+        if (calculating) return;
+        else Move();
     }
 
     private void Move()
     {
-        if (enemy.GetPos() != targetNode.GetPos())
+        if (enemy.GetPos() != new Vector2(targetNode.GetPos().x - roomLayout.GetBounds().x / 2 + 0.5f, targetNode.GetPos().y - roomLayout.GetBounds().y / 2 + 0.5f))
         {
-            Vector2.MoveTowards(enemy.transform.position, targetNode.GetPos(), Time.deltaTime * 5f);
+            enemy.transform.position = Vector2.MoveTowards(enemy.transform.position, new Vector2(targetNode.GetPos().x - roomLayout.GetBounds().x / 2 + 0.5f, targetNode.GetPos().y - roomLayout.GetBounds().y / 2 + 0.5f) , Time.deltaTime * 5f);
+        }
+        else if (actualPath.Count > 0)
+        {
+            targetNode = actualPath.Pop();
         }
         else
         {
+            calculating = true;
+            actualPath.Clear();
+            foreach (Node node in FindPath()) actualPath.Push(node);
+            calculating = false;
             targetNode = actualPath.Pop();
         }
     }
 
     private List<Node> FindPath()
     {
-        startNode = roomLayout.GetNode((int)enemy.transform.position.x, (int)enemy.transform.position.y);
-        endNode = roomLayout.GetNode((int)player.transform.position.x, (int)player.transform.position.y);
-
+        calculating = true;
+        startNode = roomLayout.GetNode((int)enemy.transform.localPosition.x + roomLayout.GetBounds().x / 2, (int)enemy.transform.localPosition.y + roomLayout.GetBounds().y / 2);
+        endNode = roomLayout.GetNode((int)player.transform.localPosition.x + roomLayout.GetBounds().x / 2, (int)player.transform.localPosition.y + roomLayout.GetBounds().y / 2);
 
         foreach (Node node in roomLayout.GetNodes())
         {
@@ -91,9 +79,11 @@ public class Patrol : IState
         startNode.hCost = GetCalculatedDistanceCost(startNode.GetPos(), endNode.GetPos());
         startNode.CalculateFCost();
 
+
         while (OpenList.Count > 0)
         {
             Node cur = GetLowestFCost(OpenList);
+
             if (cur.GetPos().Equals(endNode.GetPos()))
             {
                 return GetFinalPath(endNode);
@@ -147,28 +137,28 @@ public class Patrol : IState
         }
 
         //Right
-        if (roomLayout.GetNode(new Vector2Int(curPos.x - 1, curPos.y)) is Node nodeR)
+        if (roomLayout.GetNode(new Vector2Int(curPos.x + 1, curPos.y)) is Node nodeR)
         {
             neighbours.Add(nodeR);
         }
         //Right Up
-        if (roomLayout.GetNode(new Vector2Int(curPos.x - 1, curPos.y + 1)) is Node nodeRU)
+        if (roomLayout.GetNode(new Vector2Int(curPos.x + 1, curPos.y + 1)) is Node nodeRU)
         {
             neighbours.Add(nodeRU);
         }
         //Right Down
-        if (roomLayout.GetNode(new Vector2Int(curPos.x - 1, curPos.y - 1)) is Node nodeRD)
+        if (roomLayout.GetNode(new Vector2Int(curPos.x + 1, curPos.y - 1)) is Node nodeRD)
         {
             neighbours.Add(nodeRD);
         }
 
         //Up
-        if (roomLayout.GetNode(new Vector2Int(curPos.x - 1, curPos.y + 1)) is Node nodeU)
+        if (roomLayout.GetNode(new Vector2Int(curPos.x, curPos.y + 1)) is Node nodeU)
         {
             neighbours.Add(nodeU);
         }
         //Down
-        if (roomLayout.GetNode(new Vector2Int(curPos.x - 1, curPos.y - 1)) is Node nodeD)
+        if (roomLayout.GetNode(new Vector2Int(curPos.x, curPos.y - 1)) is Node nodeD)
         {
             neighbours.Add(nodeD);
         }
@@ -206,23 +196,20 @@ public class Patrol : IState
             path.Add(cur.pastNode);
             cur = cur.pastNode;
         }
-        path.Reverse();
         return path;
     }
 
     public void OnEnter()
     {
-        //Debug.Log(roomLayout);
-        Debug.Log(roomLayout.GetNodes().Count);
+        actualPath = new Stack<Node>();
         Color color = new Color(0, 1, 0);
-        //foreach (Node node in FindPath()) actualPath.Push(node);
-        //targetNode = actualPath.Pop();
-        //actualPath = FindPath();
+        foreach (Node node in FindPath()) actualPath.Push(node);
+        calculating = false;
+        targetNode = actualPath.Pop();
     }
 
     public void OnExit()
     {
         enemy.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
-        roadPassed = 0;
     }
 }

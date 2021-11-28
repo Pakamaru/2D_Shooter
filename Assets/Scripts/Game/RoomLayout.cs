@@ -8,7 +8,13 @@ public class RoomLayout : MonoBehaviour
 {
     private TileType[,] map = new TileType[20, 10];
     private List<Node> nodes = new List<Node>();
-
+    [SerializeField]
+    private GameObject wallPref;
+    [SerializeField]
+    private GameObject doorNextPref;
+    [SerializeField]
+    private GameObject doorBackPref;
+    
     void Start()
     {
         Tilemap tilemap = GetComponentInChildren<Tilemap>();
@@ -27,25 +33,27 @@ public class RoomLayout : MonoBehaviour
                     {
                         case "Floor":
                             map[x, y] = TileType.FLOOR;
-                            nodes.Add(new Node(new Vector2Int(x, y)));
+                            nodes.Add(new Node(new Vector2Int(x, y), TileType.FLOOR));
                             break;
-                        case "Wall": map[x, y] = TileType.WALL;
+                        case "Wall":
+                            Instantiate(wallPref, new Vector3(x - GetBounds().x / 2 + 0.5f, y - GetBounds().y / 2 + 0.5f, transform.position.z), default);
+                            map[x, y] = TileType.WALL;
                             break;
                         case "Water": map[x, y] = TileType.WATER;
                             break;
-                        case "Door": map[x, y] = TileType.DOOR;
+                        case "Door":
+                            if (x > GetBounds().x / 2)
+                                Instantiate(doorNextPref, new Vector3(x - GetBounds().x / 2 + 0.5f, y - GetBounds().y / 2 + 0.5f, transform.position.z), default);
+                            else
+                                Instantiate(wallPref, new Vector3(x - GetBounds().x / 2 + 0.5f, y - GetBounds().y / 2 + 0.5f, transform.position.z), default);
+                            map[x, y] = TileType.DOOR;
                             break;
                         default:
                             break;
                     }
                 }
-                else
-                {
-                    Debug.Log("x:" + x + " y:" + y + " tile: (null)");
-                }
             }
         }
-        print("actual count: " + nodes.Count);
     }
 
     public TileType[,] GetTiles()
@@ -65,5 +73,10 @@ public class RoomLayout : MonoBehaviour
     public List<Node> GetNodes()
     {
         return nodes;
+    }
+
+    public Vector2Int GetBounds()
+    {
+        return new Vector2Int(map.GetLength(0), map.GetLength(1));
     }
 }

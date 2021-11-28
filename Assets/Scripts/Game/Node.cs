@@ -10,11 +10,14 @@ public class Node
     public int hCost { get; set; }
     public int fCost { get; set; }
 
+    public TileType TileType { get; set; }
+
     public Node pastNode { get; set; }
 
-    public Node(Vector2Int pos)
+    public Node(Vector2Int pos, TileType tile)
     {
         this.pos = pos;
+        this.TileType = tile;
     }
 
     public void CalculateFCost()
