@@ -1,4 +1,3 @@
-using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class RoomManager
@@ -6,16 +5,13 @@ public class RoomManager
     public void LoadNextLevel(int level, bool win = false)
     {
         if (win)
-            SceneManager.LoadSceneAsync("WinScreen");
+            SceneManager.LoadScene("WinScreen");
         else
-            SceneManager.LoadSceneAsync("Room_" + level);
+            SceneManager.LoadScene("Room_" + level);
     }
 
-    public void OnPlayerEscapeButton()
+    public void GoToMainMenu()
     {
-        if (SceneManager.GetActiveScene().name != "MainMenu")
-            SceneManager.LoadSceneAsync("MainMenu");
-        else
-            Application.Quit();
+        SceneManager.LoadScene("MainMenu");
     }
 }

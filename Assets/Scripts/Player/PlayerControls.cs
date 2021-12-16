@@ -49,6 +49,14 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Axis"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""Pause"",
+                    ""type"": ""Button"",
+                    ""id"": ""2f70c5c3-7e8c-49d6-a048-22130a3ef82f"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -194,8 +202,25 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""action"": ""Rotation Y"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""41459a40-3b10-4817-af23-3a87bd69a77a"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""UI"",
+            ""id"": ""2466f5e7-a13a-4b92-8191-bf24ab8d8592"",
+            ""actions"": [],
+            ""bindings"": []
         }
     ],
     ""controlSchemes"": []
@@ -206,6 +231,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         m_Level_Shoot = m_Level.FindAction("Shoot", throwIfNotFound: true);
         m_Level_RotationX = m_Level.FindAction("Rotation X", throwIfNotFound: true);
         m_Level_RotationY = m_Level.FindAction("Rotation Y", throwIfNotFound: true);
+        m_Level_Pause = m_Level.FindAction("Pause", throwIfNotFound: true);
+        // UI
+        m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -259,6 +287,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     private readonly InputAction m_Level_Shoot;
     private readonly InputAction m_Level_RotationX;
     private readonly InputAction m_Level_RotationY;
+    private readonly InputAction m_Level_Pause;
     public struct LevelActions
     {
         private @PlayerControls m_Wrapper;
@@ -267,6 +296,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         public InputAction @Shoot => m_Wrapper.m_Level_Shoot;
         public InputAction @RotationX => m_Wrapper.m_Level_RotationX;
         public InputAction @RotationY => m_Wrapper.m_Level_RotationY;
+        public InputAction @Pause => m_Wrapper.m_Level_Pause;
         public InputActionMap Get() { return m_Wrapper.m_Level; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -288,6 +318,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @RotationY.started -= m_Wrapper.m_LevelActionsCallbackInterface.OnRotationY;
                 @RotationY.performed -= m_Wrapper.m_LevelActionsCallbackInterface.OnRotationY;
                 @RotationY.canceled -= m_Wrapper.m_LevelActionsCallbackInterface.OnRotationY;
+                @Pause.started -= m_Wrapper.m_LevelActionsCallbackInterface.OnPause;
+                @Pause.performed -= m_Wrapper.m_LevelActionsCallbackInterface.OnPause;
+                @Pause.canceled -= m_Wrapper.m_LevelActionsCallbackInterface.OnPause;
             }
             m_Wrapper.m_LevelActionsCallbackInterface = instance;
             if (instance != null)
@@ -304,15 +337,47 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @RotationY.started += instance.OnRotationY;
                 @RotationY.performed += instance.OnRotationY;
                 @RotationY.canceled += instance.OnRotationY;
+                @Pause.started += instance.OnPause;
+                @Pause.performed += instance.OnPause;
+                @Pause.canceled += instance.OnPause;
             }
         }
     }
     public LevelActions @Level => new LevelActions(this);
+
+    // UI
+    private readonly InputActionMap m_UI;
+    private IUIActions m_UIActionsCallbackInterface;
+    public struct UIActions
+    {
+        private @PlayerControls m_Wrapper;
+        public UIActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
+        public InputActionMap Get() { return m_Wrapper.m_UI; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(UIActions set) { return set.Get(); }
+        public void SetCallbacks(IUIActions instance)
+        {
+            if (m_Wrapper.m_UIActionsCallbackInterface != null)
+            {
+            }
+            m_Wrapper.m_UIActionsCallbackInterface = instance;
+            if (instance != null)
+            {
+            }
+        }
+    }
+    public UIActions @UI => new UIActions(this);
     public interface ILevelActions
     {
         void OnMove(InputAction.CallbackContext context);
         void OnShoot(InputAction.CallbackContext context);
         void OnRotationX(InputAction.CallbackContext context);
         void OnRotationY(InputAction.CallbackContext context);
+        void OnPause(InputAction.CallbackContext context);
+    }
+    public interface IUIActions
+    {
     }
 }

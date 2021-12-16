@@ -20,10 +20,6 @@ public class DoorCollision : MonoBehaviour
                 gameController.currentRoomLevel += 1;
                 gameController.NextLevel();
             }
-            else
-            {
-                
-            }
         }
     }
 }

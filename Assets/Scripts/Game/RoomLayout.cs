@@ -11,6 +11,10 @@ public class RoomLayout : MonoBehaviour
     [SerializeField]
     private GameObject wallPref;
     [SerializeField]
+    private GameObject waterPref;
+    [SerializeField]
+    private GameObject spikePref;
+    [SerializeField]
     private GameObject doorNextPref;
     [SerializeField]
     private GameObject doorBackPref;
@@ -39,7 +43,13 @@ public class RoomLayout : MonoBehaviour
                             Instantiate(wallPref, new Vector3(x - GetBounds().x / 2 + 0.5f, y - GetBounds().y / 2 + 0.5f, transform.position.z), default);
                             map[x, y] = TileType.WALL;
                             break;
-                        case "Water": map[x, y] = TileType.WATER;
+                        case "Water":
+                            Instantiate(waterPref, new Vector3(x - GetBounds().x / 2 + 0.5f, y - GetBounds().y / 2 + 0.5f, transform.position.z), default);
+                            map[x, y] = TileType.WATER;
+                            break;
+                        case "Spike":
+                            Instantiate(spikePref, new Vector3(x - GetBounds().x / 2 + 0.5f, y - GetBounds().y / 2 + 0.5f, transform.position.z), default);
+                            map[x, y] = TileType.SPIKE;
                             break;
                         case "Door":
                             if (x > GetBounds().x / 2)

@@ -10,8 +10,9 @@ public class Enemy : CombatUnit
     private RoomLayout roomLayout;
     private FieldOfView fieldOfView;
 
-    private Vector3 startPos;
+    [SerializeField]
     private int attackRange;
+    private Vector3 startPos;
 
     public float XPYield { get; set; }
 
@@ -50,8 +51,6 @@ public class Enemy : CombatUnit
         Func<bool> IsInAttackRange() => () => Vector2.Distance(transform.position, player.transform.position) <= attackRange;
         Func<bool> IsSceneLoaded() => () => SceneManager.GetActiveScene().isLoaded;
         Func<bool> IsPlayerInView() => () => fieldOfView.InView();
-
-        attackRange = 5;
     }
 
     void Update()

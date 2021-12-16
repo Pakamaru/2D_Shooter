@@ -28,6 +28,7 @@ public abstract class CombatUnit : MonoBehaviour
     private void Start()
     {
         healthBar = GetComponentInChildren<HealthBar>();
+        print(healthBar);
         healthBar.SetHealth(1, 1);
     }
 
@@ -36,6 +37,7 @@ public abstract class CombatUnit : MonoBehaviour
         if (shooter.GetType().Name == "Player")
         {
             FindObjectOfType<GameController>().currentRoom.KillOneEnemy();
+            shooter.GetComponent<Player>().AddXP(transform.GetComponent<Enemy>().XPYield);
         }
         else if (shooter.GetType().Name == "Enemy")
         {
@@ -58,9 +60,9 @@ public abstract class CombatUnit : MonoBehaviour
 
     private void TakeDamage(CombatUnit shooter)
     {
-        print(shooter.CurDmg);
         CurHealth -= shooter.CurDmg;
-        healthBar.SetHealth(CurHealth, MaxHealth);
+        print(healthBar);
+        //healthBar.SetHealth(CurHealth, MaxHealth);
         if (CurHealth <= 0)
         {
             Die(shooter);

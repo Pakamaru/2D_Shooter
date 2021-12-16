@@ -1,23 +1,25 @@
 using System.Collections;
 using UnityEngine;
 
-public abstract class Weapon : MonoBehaviour
+public class Weapon : MonoBehaviour
 {
-    protected int magazine;
-    protected float AttackSpeed { get; set; }
-    protected float ShootRange { get; set; }
-    protected float ReloadSpeed { get; set; }
+    public int MaxMagazine { get; set; }
+    protected int curMagazine;
+    public float AttackSpeed { get; set; }
+    public float ReloadSpeed { get; set; }
     protected float reloadTimer;
-    protected bool Reloading { get; set; }
+    public bool Reloading { get; set; }
     protected bool shooting;
     [SerializeField]
     protected GameObject bullet;
 
     public void SetVars(GameObject par, int mag, float aS, float rS)
     {
-        magazine = mag;
+        MaxMagazine = mag;
         AttackSpeed = aS;
         ReloadSpeed = rS;
+
+        curMagazine = MaxMagazine;
     }
 
     public void Shoot()
@@ -29,25 +31,25 @@ public abstract class Weapon : MonoBehaviour
     public IEnumerator Shooter()
     {
         shooting = true;
-        bool bullets = CheckForBullets();
+        bool bullets = curMagazine == 0 ? false : true;
         if (bullets)
         {
             GameObject bullet_ = Instantiate(bullet, transform.parent.transform) as GameObject;
-            magazine--;
+            curMagazine--;
         }
         else
         {
-            //Reload
             Reloading = true;
-            StartCoroutine("Reload", ReloadSpeed);
+            StartCoroutine(Reload(ReloadSpeed));
         }
         yield return new WaitForSeconds(AttackSpeed);
         shooting = false;
     }
-    public void Reload()
+    public IEnumerator Reload(float time)
     {
-        //yield return new WaitForSeconds(reloadSpeed);
+        yield return new WaitForSeconds(time);
         Reloading = false;
+        curMagazine = MaxMagazine;
         //Play sound
     }
 
@@ -62,16 +64,5 @@ public abstract class Weapon : MonoBehaviour
         {
             reloadTimer -= Time.deltaTime;
         }
-        else
-        {
-
-        }
-    }
-
-    private bool CheckForBullets()
-    {
-        if (magazine == 0)
-            return false;
-        return true;
     }
 }
