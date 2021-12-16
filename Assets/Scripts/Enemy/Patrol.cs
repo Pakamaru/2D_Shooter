@@ -1,3 +1,5 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -21,7 +23,6 @@ public class Patrol : IState
     private const int DIAGONAL_MOVE_COST = 15;
 
     private Node targetNode;
-    private bool calculating;
 
 
     public Patrol(Enemy enemy, GameObject body, GameObject player, RoomLayout roomLayout)
@@ -34,8 +35,7 @@ public class Patrol : IState
 
     public void Tick()
     {
-        if (calculating) return;
-        else Move();
+        Move();
     }
 
     private void Move()
@@ -50,18 +50,13 @@ public class Patrol : IState
         }
         else
         {
-            calculating = true;
-            actualPath.Clear();
-            foreach (Node node in FindPath()) actualPath.Push(node);
-            calculating = false;
-            targetNode = actualPath.Pop();
+            
         }
     }
 
     private List<Node> FindPath()
     {
-        calculating = true;
-        startNode = roomLayout.GetNode((int)enemy.transform.localPosition.x + roomLayout.GetBounds().x / 2, (int)enemy.transform.localPosition.y + roomLayout.GetBounds().y / 2);
+        startNode = roomLayout.GetNode((int)Math.Floor(enemy.transform.localPosition.x + roomLayout.GetBounds().x / 2), (int)Math.Floor(enemy.transform.localPosition.y + roomLayout.GetBounds().y / 2));
         endNode = roomLayout.GetNode((int)player.transform.localPosition.x + roomLayout.GetBounds().x / 2, (int)player.transform.localPosition.y + roomLayout.GetBounds().y / 2);
 
         foreach (Node node in roomLayout.GetNodes())
@@ -74,6 +69,7 @@ public class Patrol : IState
         if (endNode == null) return null;
         OpenList = new List<Node> { startNode };
         closedList = new List<Node>();
+
 
         startNode.gCost = 0;
         startNode.hCost = GetCalculatedDistanceCost(startNode.GetPos(), endNode.GetPos());
@@ -199,17 +195,35 @@ public class Patrol : IState
         return path;
     }
 
+    private IEnumerator CreateNewPath()
+    {
+        float delay = 5f;
+        WaitForSeconds wait = new WaitForSeconds(delay);
+        while (true)
+        {
+            yield return wait;
+            try
+            {
+                actualPath.Clear();
+                foreach (Node node in FindPath()) actualPath.Push(node);
+                targetNode = actualPath.Pop();
+            }
+            catch { }
+        }
+    }
+
     public void OnEnter()
     {
-        actualPath = new Stack<Node>();
         Color color = new Color(0, 1, 0);
+        actualPath = new Stack<Node>();
         foreach (Node node in FindPath()) actualPath.Push(node);
-        calculating = false;
         targetNode = actualPath.Pop();
+        enemy.StartChildCoroutine(CreateNewPath());
     }
 
     public void OnExit()
     {
         enemy.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
+        enemy.EndChildCoroutine(CreateNewPath());
     }
 }

@@ -6,14 +6,16 @@ public class Bullet : MonoBehaviour
 {
     public CombatUnit Shooter { get; set; }
     private Rigidbody2D rb;
-    private float speed = 20;
-    private float lifeTime = 5;
+    private float speed = 5;
+    private float lifeTime = 10;
 
     void Start()
     {
         StartCoroutine(SelfDestruct());
         rb = this.GetComponent<Rigidbody2D>();
         rb.velocity = -transform.up * speed;
+        Shooter = transform.GetComponentInParent<CombatUnit>();
+        transform.SetParent(null);
     }
 
     IEnumerator SelfDestruct()

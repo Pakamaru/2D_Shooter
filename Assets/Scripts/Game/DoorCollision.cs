@@ -16,13 +16,13 @@ public class DoorCollision : MonoBehaviour
         {
             if (room.GetEnemyCount() == 0)
             {
-                gameController.player = collision.gameObject.GetComponent<Player>();
+                gameController.Player = collision.gameObject.GetComponent<Player>();
                 gameController.currentRoomLevel += 1;
                 gameController.NextLevel();
             }
             else
             {
-
+                
             }
         }
     }

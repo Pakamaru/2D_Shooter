@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class MainMenu : MonoBehaviour
@@ -7,7 +5,7 @@ public class MainMenu : MonoBehaviour
     public void OnPlay()
     {
         FindObjectOfType<GameController>().currentRoomLevel = 1;
-        FindObjectOfType<GameController>().NextLevel();
+        FindObjectOfType<GameController>().StartGame();
     }
 
     public void OnOptions()

@@ -1,25 +1,21 @@
 using UnityEngine;
-using System.Collections;
 using UnityEngine.SceneManagement;
-using System.Collections.Generic;
-using UnityEditor;
 
 public class RoomManager
 {
-    public void LoadNextLevel(int level)
+    public void LoadNextLevel(int level, bool win = false)
     {
-        if (level < 3)
-            SceneManager.LoadScene("Room_" + level);
+        if (win)
+            SceneManager.LoadSceneAsync("WinScreen");
         else
-            SceneManager.LoadScene("WinScreen");
+            SceneManager.LoadSceneAsync("Room_" + level);
     }
 
     public void OnPlayerEscapeButton()
     {
         if (SceneManager.GetActiveScene().name != "MainMenu")
-            SceneManager.LoadScene("MainMenu");
+            SceneManager.LoadSceneAsync("MainMenu");
         else
             Application.Quit();
-
     }
 }

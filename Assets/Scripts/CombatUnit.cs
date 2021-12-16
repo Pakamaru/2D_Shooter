@@ -2,16 +2,7 @@ using UnityEngine;
 
 public abstract class CombatUnit : MonoBehaviour
 {
-    public CombatUnit(int hp, int dmg, float speed)
-    {
-        this.MaxHealth = hp;
-        this.MaxDmg = dmg;
-        this.MaxSpeed = speed;
-
-        this.CurHealth = MaxHealth;
-        this.CurDmg = MaxDmg;
-        this.CurSpeed = MaxSpeed;
-    }
+    private HealthBar healthBar;
 
     public void SetVars(int hp, int dmg, float speed)
     {
@@ -30,12 +21,15 @@ public abstract class CombatUnit : MonoBehaviour
     public int MaxDmg { get; set; }
     public float MaxSpeed { get; set; }
 
-
     public int CurHealth { get; set; }
     public int CurDmg { get; set; }
     public float CurSpeed { get; set; }
 
-    private bool isTakingDmg;
+    private void Start()
+    {
+        healthBar = GetComponentInChildren<HealthBar>();
+        healthBar.SetHealth(1, 1);
+    }
 
     protected void Die(CombatUnit shooter)
     {
@@ -52,17 +46,21 @@ public abstract class CombatUnit : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("Bullet") && !collision.gameObject.GetComponent<Bullet>().Shooter.CompareTag(gameObject.tag) && !isTakingDmg)
+        if (collision.gameObject.CompareTag("Bullet"))
         {
-            isTakingDmg = true;
-            TakeDamage(collision.gameObject.GetComponent<Bullet>().Shooter);
-            Destroy(collision.gameObject);
+            if (!collision.gameObject.GetComponent<Bullet>().Shooter.CompareTag(gameObject.tag))
+            {
+                TakeDamage(collision.gameObject.GetComponent<Bullet>().Shooter);
+                Destroy(collision.gameObject);
+            }
         }
     }
 
     private void TakeDamage(CombatUnit shooter)
     {
+        print(shooter.CurDmg);
         CurHealth -= shooter.CurDmg;
+        healthBar.SetHealth(CurHealth, MaxHealth);
         if (CurHealth <= 0)
         {
             Die(shooter);

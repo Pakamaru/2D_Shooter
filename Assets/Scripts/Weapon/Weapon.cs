@@ -1,11 +1,8 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class Weapon : MonoBehaviour
 {
-    protected GameObject parent;
-
     protected int magazine;
     protected float AttackSpeed { get; set; }
     protected float ShootRange { get; set; }
@@ -18,7 +15,6 @@ public abstract class Weapon : MonoBehaviour
 
     public void SetVars(GameObject par, int mag, float aS, float rS)
     {
-        parent = par;
         magazine = mag;
         AttackSpeed = aS;
         ReloadSpeed = rS;
@@ -36,9 +32,7 @@ public abstract class Weapon : MonoBehaviour
         bool bullets = CheckForBullets();
         if (bullets)
         {
-            GameObject bullet_ = Instantiate(bullet, parent.transform) as GameObject;
-            bullet_.transform.SetParent(null);
-            bullet_.GetComponent<Bullet>().Shooter = parent.GetComponent<Player>();
+            GameObject bullet_ = Instantiate(bullet, transform.parent.transform) as GameObject;
             magazine--;
         }
         else
@@ -80,5 +74,4 @@ public abstract class Weapon : MonoBehaviour
             return false;
         return true;
     }
-
 }

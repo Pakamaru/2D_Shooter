@@ -56,15 +56,11 @@ public class RoomLayout : MonoBehaviour
         }
     }
 
-    public TileType[,] GetTiles()
-    {
-        return map;
-    }
-
     public Node GetNode(Vector2Int pos)
     {
         return nodes.Where(n => n.GetPos() == pos).FirstOrDefault();
     }
+
     public Node GetNode(int x, int y)
     {
         return nodes.Where(n => n.GetPos() == new Vector2Int(x, y)).FirstOrDefault();
