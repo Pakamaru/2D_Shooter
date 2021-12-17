@@ -9,6 +9,7 @@ TagManager:
   - Wall
   - Room
   - Enemy
+  - Spike
   layers:
   - Default
   - TransparentFX

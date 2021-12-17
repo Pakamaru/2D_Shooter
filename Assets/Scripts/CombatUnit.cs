@@ -25,25 +25,24 @@ public abstract class CombatUnit : MonoBehaviour
     public int CurDmg { get; set; }
     public float CurSpeed { get; set; }
 
-    private void Start()
+    protected void Start()
     {
         healthBar = GetComponentInChildren<HealthBar>();
-        print(healthBar);
         healthBar.SetHealth(1, 1);
     }
 
-    protected void Die(CombatUnit shooter)
+    protected void Die(CombatUnit shooter = null)
     {
         if (shooter.GetType().Name == "Player")
         {
+            GameObject.Destroy(gameObject);
             FindObjectOfType<GameController>().currentRoom.KillOneEnemy();
             shooter.GetComponent<Player>().AddXP(transform.GetComponent<Enemy>().XPYield);
         }
-        else if (shooter.GetType().Name == "Enemy")
+        else if (shooter.GetType().Name == "Enemy" || shooter == null)
         {
-            print("You die");
+            GetComponent<Player>().DieRoutine();
         }
-        GameObject.Destroy(gameObject);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -58,14 +57,23 @@ public abstract class CombatUnit : MonoBehaviour
         }
     }
 
-    private void TakeDamage(CombatUnit shooter)
+    public virtual void TakeDamage(CombatUnit shooter)
     {
         CurHealth -= shooter.CurDmg;
-        print(healthBar);
-        //healthBar.SetHealth(CurHealth, MaxHealth);
+        healthBar.SetHealth(CurHealth, MaxHealth);
         if (CurHealth <= 0)
         {
             Die(shooter);
+        }
+    }
+
+    public virtual void TakeDamage(int dmg)
+    {
+        CurHealth -= dmg;
+        healthBar.SetHealth(CurHealth, MaxHealth);
+        if (CurHealth <= 0)
+        {
+            Die();
         }
     }
 }

@@ -67,9 +67,10 @@ public class GameController : MonoBehaviour
             Player.Level = 1;
             Player.MaxXP = 0;
             Player.CurXP = 0;
-            Player.SetVars(100, 10, 2f);
+            Player.SetVars(300, 20, 2f);
             Player.Weapon = Player.transform.Find("Body").Find("Gun").gameObject.GetComponent<Weapon>();
             Player.Weapon.SetVars(this.gameObject, 10, 1, 5);
+            Player.GameStarted();
         }
     }
 

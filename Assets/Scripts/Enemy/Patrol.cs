@@ -6,7 +6,6 @@ using UnityEngine;
 public class Patrol : IState
 {
     private Enemy enemy;
-    private GameObject body;
     private GameObject player;
 
     // Algorithm
@@ -28,7 +27,6 @@ public class Patrol : IState
     public Patrol(Enemy enemy, GameObject body, GameObject player, RoomLayout roomLayout)
     {
         this.enemy = enemy;
-        this.body = body;
         this.player = player;
         this.roomLayout = roomLayout;
     }
@@ -47,10 +45,6 @@ public class Patrol : IState
         else if (actualPath.Count > 0)
         {
             targetNode = actualPath.Pop();
-        }
-        else
-        {
-            
         }
     }
 

@@ -13,10 +13,10 @@ public class Room : MonoBehaviour
         enemies = tempEnemies.Select(x => x.GetComponent<Enemy>()).ToArray();
         enemyCount = tempEnemies.Length;
         controller.currentRoom = transform.GetComponent<Room>();
-        float multi = controller.currentRoomLevel * controller.currentRoomLevel;
+        float multi = controller.currentRoomLevel * 1.5f;
         foreach (Enemy enemy in enemies)
         {
-            enemy.SetVars(Mathf.RoundToInt(100 * multi), Mathf.RoundToInt(10 * multi), 2f, 50 * multi);
+            enemy.SetVars(Mathf.RoundToInt(50 * multi), Mathf.RoundToInt(10 * multi), 2f, 50 * multi);
         }
     }
 

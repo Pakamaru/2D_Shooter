@@ -2973,6 +2973,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   wallPref: {fileID: 858220142064128204, guid: 21baec9eed464684793e56b6992ec6ef, type: 3}
+  waterPref: {fileID: 2510923927962498140, guid: 16da17c559694e946a45a881b920db13, type: 3}
+  spikePref: {fileID: 4352082067714338826, guid: 33305fb19a4ff514493b788343554d86, type: 3}
   doorNextPref: {fileID: 9003321542935228173, guid: 6fd54a3f158e4bf42a264631fc268683, type: 3}
   doorBackPref: {fileID: 8260209821558933761, guid: 51e7ebb2981d79e44b5b3447cfac743a, type: 3}
 --- !u!156049354 &2009606812

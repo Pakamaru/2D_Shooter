@@ -22,6 +22,7 @@ public class Enemy : CombatUnit
     {
         base.SetVars(hp, dmg, speed);
         this.XPYield = xpYield;
+        print(dmg);
     }
 
     private void Awake()

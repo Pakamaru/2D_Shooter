@@ -50,6 +50,7 @@ public class RoomLayout : MonoBehaviour
                         case "Spike":
                             Instantiate(spikePref, new Vector3(x - GetBounds().x / 2 + 0.5f, y - GetBounds().y / 2 + 0.5f, transform.position.z), default);
                             map[x, y] = TileType.SPIKE;
+                            nodes.Add(new Node(new Vector2Int(x, y), TileType.SPIKE));
                             break;
                         case "Door":
                             if (x > GetBounds().x / 2)

@@ -4,14 +4,14 @@ using UnityEngine;
 public class Weapon : MonoBehaviour
 {
     public int MaxMagazine { get; set; }
-    protected int curMagazine;
+    public int curMagazine { get; set; }
     public float AttackSpeed { get; set; }
     public float ReloadSpeed { get; set; }
-    protected float reloadTimer;
+    private float reloadTimer;
     public bool Reloading { get; set; }
-    protected bool shooting;
+    private bool shooting;
     [SerializeField]
-    protected GameObject bullet;
+    private GameObject bullet;
 
     public void SetVars(GameObject par, int mag, float aS, float rS)
     {
@@ -36,6 +36,8 @@ public class Weapon : MonoBehaviour
         {
             GameObject bullet_ = Instantiate(bullet, transform.parent.transform) as GameObject;
             curMagazine--;
+            if (gameObject.tag == "Player")
+                GetComponent<PlayerUI>().SetAmmo(curMagazine, MaxMagazine);
         }
         else
         {
@@ -50,6 +52,8 @@ public class Weapon : MonoBehaviour
         yield return new WaitForSeconds(time);
         Reloading = false;
         curMagazine = MaxMagazine;
+        if (gameObject.tag == "Player")
+            GetComponent<PlayerUI>().SetAmmo(curMagazine, MaxMagazine);
         //Play sound
     }
 
