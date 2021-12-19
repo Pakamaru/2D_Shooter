@@ -1,11 +1,13 @@
 using System;
 using UnityEngine;
+using System.Linq;
 public class Player : CombatUnit
 {
     public int Level { get; set; }
     public float CurXP { get; set; }
     public float MaxXP { get; set; }
 
+    [SerializeField]
     private GameObject upgradeCanvas;
     private GameController gameController;
     private PlayerUI ui;
@@ -13,10 +15,10 @@ public class Player : CombatUnit
     new void Start()
     {
         base.Start();
-        upgradeCanvas = GameObject.Find("LevelUpMenu");
         upgradeCanvas.SetActive(false);
         gameController = FindObjectOfType<GameController>();
         ui = GetComponent<PlayerUI>();
+        Weapon = GetComponentInChildren<Weapon>();
     }
 
     public void GameStarted()
@@ -29,6 +31,21 @@ public class Player : CombatUnit
         ui.SetHealth(CurHealth, MaxHealth);
     }
 
+    public void InitPlayer(Player player, Weapon weapon)
+    {
+        this.CurDmg = player.CurDmg;
+        this.CurHealth = player.CurHealth;
+        this.CurSpeed = player.CurSpeed;
+        this.CurXP = player.CurXP;
+        this.MaxDmg = player.MaxDmg;
+        this.MaxHealth = player.MaxHealth;
+        this.MaxSpeed = player.MaxSpeed;
+        this.MaxXP = player.MaxXP;
+        this.Weapon.SetVars(weapon.MaxMagazine, weapon.GetAS(), weapon.GetRS());
+        this.Weapon.curMagazine = weapon.curMagazine;
+        GameStarted();
+    }
+
     public void AddXP(float xp)
     {
         CurXP += xp;
@@ -37,9 +54,9 @@ public class Player : CombatUnit
         if (tempXP >= 0)
         {
             Level++;
-            print(Level);
             ui.SetLevel(Level);
             MaxXP *= 1.5f;
+            CurXP = 0;
             upgradeCanvas.SetActive(true);
             gameController.StopGameAndInput(true);
             AddXP(tempXP);
@@ -48,7 +65,7 @@ public class Player : CombatUnit
 
     public void DieRoutine()
     {
-
+        gameController.LoseGame();
     }
 
     public override void TakeDamage(CombatUnit shooter)

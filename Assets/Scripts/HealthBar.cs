@@ -12,6 +12,8 @@ public class HealthBar : MonoBehaviour
     {
         slider = GetComponentInChildren<Slider>();
         offset = new Vector3(0, GetComponentInParent<CombatUnit>().transform.localScale.y, 0);
+        slider.value = 100;
+        slider.maxValue = 100;
     }
 
     public void SetHealth(float health, float maxHealth)

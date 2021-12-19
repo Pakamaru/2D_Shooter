@@ -558,6 +558,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e36598ec6669cc947a1513cce942e479, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  upgradeCanvas: {fileID: 5476887990625586797}
 --- !u!114 &6118689617027264140
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2355,7 +2356,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1827692901856137962
 RectTransform:
   m_ObjectHideFlags: 0

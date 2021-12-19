@@ -758,6 +758,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentRoomLevel: 0
   currentRoom: {fileID: 0}
+  pauseScreen: {fileID: 56655463493561728}
 --- !u!1 &8029454092753921549
 GameObject:
   m_ObjectHideFlags: 0

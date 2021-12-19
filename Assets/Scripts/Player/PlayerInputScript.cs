@@ -20,7 +20,12 @@ public class PlayerInputScript : MonoBehaviour
         if (shooting) player.Weapon.Shoot();
     }
 
-    public void Movement(InputAction.CallbackContext context)
+    public void InitPlayer(Player player)
+    {
+        //this.player = player;
+    }
+
+        public void Movement(InputAction.CallbackContext context)
     {
         Vector2 movement = context.ReadValue<Vector2>();
         float h = player.CurSpeed * movement.x;

@@ -22,7 +22,6 @@ public class Enemy : CombatUnit
     {
         base.SetVars(hp, dmg, speed);
         this.XPYield = xpYield;
-        print(dmg);
     }
 
     private void Awake()
@@ -33,7 +32,7 @@ public class Enemy : CombatUnit
         roomLayout = GameObject.Find("Grid").GetComponent<RoomLayout>();
         fieldOfView = transform.GetComponent<FieldOfView>();
         Weapon = transform.Find("Gun").gameObject.GetComponent<Weapon>();
-        Weapon.SetVars(this.gameObject, 10, 2, 5);
+        Weapon.SetVars(10, 2, 5);
 
         stateMachine = new StateMachine();
 

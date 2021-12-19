@@ -34,7 +34,6 @@ public class PlayerUI : MonoBehaviour
     }
     public void SetXp(float cur, float max)
     {
-        print("xp float: " + cur + ", " + max + " xp int: " + (int)cur + ", " + (int)max);
         xp.text =  (int)cur + "/" + (int)max;
     }
     public void SetHealth(int cur, int max)
@@ -47,10 +46,10 @@ public class PlayerUI : MonoBehaviour
     }
     public void SetAttackSpeed(float txt)
     {
-        attackSpeed.text = "Attack Speed " + txt;
+        attackSpeed.text = "Attack Speed " + (int)txt;
     }
     public void SetReloadSpeed(float txt)
     {
-        reloadSpeed.text = "Reload Speed " + txt;
+        reloadSpeed.text = "Reload Speed " + (int)txt;
     }
 }

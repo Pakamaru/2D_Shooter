@@ -13,13 +13,22 @@ public class Weapon : MonoBehaviour
     [SerializeField]
     private GameObject bullet;
 
-    public void SetVars(GameObject par, int mag, float aS, float rS)
+    public void SetVars(int mag, float aS, float rS)
     {
         MaxMagazine = mag;
         AttackSpeed = aS;
         ReloadSpeed = rS;
 
         curMagazine = MaxMagazine;
+    }
+
+    public float GetAS()
+    {
+        return AttackSpeed;
+    }
+    public float GetRS()
+    {
+        return ReloadSpeed;
     }
 
     public void Shoot()
@@ -36,8 +45,8 @@ public class Weapon : MonoBehaviour
         {
             GameObject bullet_ = Instantiate(bullet, transform.parent.transform) as GameObject;
             curMagazine--;
-            if (gameObject.tag == "Player")
-                GetComponent<PlayerUI>().SetAmmo(curMagazine, MaxMagazine);
+            if (gameObject.GetComponents<PlayerBasicGun>().Length > 0)
+                GetComponentInParent<PlayerUI>().SetAmmo(curMagazine, MaxMagazine);
         }
         else
         {
@@ -52,8 +61,8 @@ public class Weapon : MonoBehaviour
         yield return new WaitForSeconds(time);
         Reloading = false;
         curMagazine = MaxMagazine;
-        if (gameObject.tag == "Player")
-            GetComponent<PlayerUI>().SetAmmo(curMagazine, MaxMagazine);
+        if (gameObject.GetComponents<PlayerBasicGun>().Length > 0)
+            GetComponentInParent<PlayerUI>().SetAmmo(curMagazine, MaxMagazine);
         //Play sound
     }
 

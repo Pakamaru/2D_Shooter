@@ -11,8 +11,10 @@ public class GameController : MonoBehaviour
     public int currentRoomLevel;
     public Room currentRoom;
     public Player Player { get; set; }
+    public Weapon Weapon { get; set; }
 
     private int roomCount = 9;
+    [SerializeField]
     private GameObject pauseScreen;
 
     private void Awake()
@@ -27,31 +29,66 @@ public class GameController : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        pauseScreen = GetComponentInChildren<Canvas>().gameObject;
         pauseScreen.SetActive(false);
-    }
-
-    private void Update()
-    {
     }
 
     public void StartGame()
     {
         int randomNumber = Random.Range(1, roomCount);
-        roomManager.LoadNextLevel(randomNumber);
+        int index = roomManager.LoadNextLevel(randomNumber);
+        if (SceneManager.GetActiveScene().buildIndex != randomNumber)
+        {
+            StartCoroutine("waitForFirstSceneLoad", randomNumber);
+        }
+    }
+
+    public void NextLevel()
+    {
+        if (currentRoomLevel == 9)
+        {
+            NextBossLevel();
+            return;
+        }
+        int randomNumber = Random.Range(1, roomCount);
+        int index = roomManager.LoadNextLevel(randomNumber);
         if (SceneManager.GetActiveScene().buildIndex != randomNumber)
         {
             StartCoroutine("waitForSceneLoad", randomNumber);
         }
     }
 
-    public void NextLevel()
+    private void NextBossLevel()
     {
-        int randomNumber = Random.Range(1, roomCount);
-        roomManager.LoadNextLevel(randomNumber);
-        if (SceneManager.GetActiveScene().buildIndex != randomNumber)
+        int number = 10;
+        roomManager.LoadNextBoss();
+        if (SceneManager.GetActiveScene().buildIndex != number)
         {
-            StartCoroutine("waitForSceneLoad", randomNumber);
+            StartCoroutine("waitForSceneLoad", number);
+        }
+    }
+
+    public void WinGame()
+    {
+        StopGameAndInput(true);
+        roomManager.LoadNextLevel(1, true);
+    }
+
+    public void LoseGame()
+    {
+        StopGameAndInput(true);
+        roomManager.LoadLoseScreen();
+    }
+
+    private IEnumerator waitForBossSceneLoad()
+    {
+        while (!SceneManager.GetSceneByName("Boss_1").isLoaded)
+        {
+            yield return null;
+        }
+        if (SceneManager.GetSceneByName("Boss_1").isLoaded)
+        {
+            GameObject.Find("Player").GetComponent<Player>().InitPlayer(Player, Weapon);
+            GameObject.Find("Player").GetComponent<PlayerInputScript>().InitPlayer(Player);
         }
     }
 
@@ -63,15 +100,44 @@ public class GameController : MonoBehaviour
         }
         if (SceneManager.GetActiveScene().buildIndex == sceneNumber)
         {
+            GameObject.Find("Player").GetComponent<Player>().InitPlayer(Player, Weapon);
+            GameObject.Find("Player").GetComponent<PlayerInputScript>().InitPlayer(Player);
+        }
+    }
+
+    private IEnumerator waitForFirstSceneLoad(int sceneNumber)
+    {
+        while (SceneManager.GetActiveScene().buildIndex != sceneNumber)
+        {
+            yield return null;
+        }
+        if (SceneManager.GetActiveScene().buildIndex == sceneNumber)
+        {
             Player = GameObject.Find("Player").GetComponent<Player>();
             Player.Level = 1;
-            Player.MaxXP = 0;
+            Player.MaxXP = 100;
             Player.CurXP = 0;
             Player.SetVars(300, 20, 2f);
-            Player.Weapon = Player.transform.Find("Body").Find("Gun").gameObject.GetComponent<Weapon>();
-            Player.Weapon.SetVars(this.gameObject, 10, 1, 5);
+            Player.Weapon = Player.GetComponentInChildren<Weapon>();
+            Player.Weapon.SetVars(10, 1, 3);
             Player.GameStarted();
         }
+    }
+
+    public void SavePlayer(Player player)
+    {
+        Player = new Player();
+        Player.CurDmg = player.CurDmg;
+        Player.CurHealth = player.CurHealth;
+        Player.CurSpeed = player.CurSpeed;
+        Player.CurXP = player.CurXP;
+        Player.MaxDmg = player.MaxDmg;
+        Player.MaxHealth = player.MaxHealth;
+        Player.MaxSpeed = player.MaxSpeed;
+        Player.MaxXP = player.MaxXP;
+        Weapon = new Weapon();
+        Weapon.SetVars(player.Weapon.MaxMagazine, player.Weapon.GetAS(), player.Weapon.GetRS());
+        Weapon.curMagazine = player.Weapon.curMagazine;
     }
 
     public void PauseGame()
@@ -85,20 +151,25 @@ public class GameController : MonoBehaviour
         if (stop)
         {
             Time.timeScale = 0;
-            Player.GetComponent<PlayerInput>().SwitchCurrentActionMap("UI");
+            GameObject.Find("Player").GetComponent<PlayerInput>().SwitchCurrentActionMap("UI");
         }
         else
         {
             Time.timeScale = 1;
-            Player.GetComponent<PlayerInput>().SwitchCurrentActionMap("Level");
+            GameObject.Find("Player").GetComponent<PlayerInput>().SwitchCurrentActionMap("Level");
         }
+    }
+
+    public void QuitToMainMenu()
+    {
+        roomManager.GoToMainMenu();
     }
     
     public void QuitLevel()
     {
         StopGameAndInput(false);
         pauseScreen.SetActive(false);
-        roomManager.GoToMainMenu();
+        QuitToMainMenu();
     }
 
     public void ResumeLevel()
